@@ -2,7 +2,7 @@
 # Data Extraction and Transformation Pipeline in Databricks
 
 This pipeline extracts data from the UK Government’s website, performs transformations, and saves the result as a CSV file in the Databricks FileStore.
-
+Note: Because of Resource Limitations used Databricks as end to end Implementation where as we can Implement this in Azure Data Factory with Databricks Integration to have additional features of ADF like schedululing,debug,logging etc
 ## Table of Contents
 - [Project Overview](#project-overview)
 - [Key Features](#key-features)
@@ -164,6 +164,6 @@ We can have CI/CD Pipeline to deploy the pipelines by using Azure Devops, GIT, D
 8. sonarQube can be integrated for the code quality.
 9. Email actions for the failure and success jobs .
 10. We can Integrate the Final Tables with Collibra to have Technical Metadata,Business Metadata and Operational Metadata
-11. Because of Resource Limitations used Databricks as end to end Implementation where as we can Implement this in Azure Data Factory with Databricks Integration to have additional features of ADF like schedululing,debug,logging etc
+
 
 
