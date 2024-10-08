@@ -1,85 +1,38 @@
 
-# Designing the Delta Table for Optimal Read and Write Performance
+# Energy Trend Data Analysis
 
-This document outlines the Energy Trend Analysis of a Delta table to optimize for read and write performance based on the following considerations: read patterns, write patterns, concurrency, and handling deduplication and upserts.
+## A) Query Examples for Analysis
 
-## Assumptions About Table Usage
+### Year-to-Year Data Trend Analysis:
+- **How did Indigenous Production, Import, and Export Products change between 1999 and 2000?**: Analyze the differences in production, imports, and exports between these years.
+- **Year-over-Year Changes in Indigenous Production (1999–2003)**: Track how Indigenous production fluctuated year-over-year.
 
-1. **Time-Series Data**: The table contains time-series data where queries typically filter by date ranges or specific time intervals.
-2. **Frequent Updates**: Data is updated frequently, with both batch inserts and upserts.
-3. **High Query Frequency**: Users perform a mix of ad-hoc queries for specific time periods, along with larger aggregate queries for analytics.
+### Aggregation Product-wise and Sub-product-wise:
+- **Total Production in the 4th Quarter of 2001**: Calculate the total production across all sub-products for this period.
+- **Crude Oil & NGLs vs Feedstocks Production (1999–2003)**: Compare production trends for Crude Oil, NGLs, and Feedstocks over the specified time frame.
 
----
+### Filtering by Sub-products:
+- **Total Crude Oil & NGLs Production Across All Quarters**: Aggregate the total production for Crude Oil and NGLs for all available quarters.
+- **Quarterly Crude Oil & NGLs Production (1999–2003)**: Display the production data for these products by quarter over the years.
 
-## a. Read Patterns
+### Time-Range Queries:
+- **Total Indigenous Production (Q1 1999 – Q2 2003)**: Filter and sum Indigenous production data over this time range.
+- **Crude Oil & NGLs Production in 2000**: Show production data for Crude Oil and NGLs for the year 2000.
 
-### Expected Queries:
-- **Time-Range Queries**: Queries that filter data based on specific date or time intervals (e.g., `WHERE event_date BETWEEN '2023-01-01' AND '2023-12-31'`).
-- **Column-Based Filters**: Queries filtering based on specific dimensions (e.g., `WHERE region = 'US' AND product_id = 123`).
-- **Aggregations**: Queries performing aggregations over large amounts of data, such as calculating sums, averages, or counts.
+## B) Serializable Isolation in Databricks
+Databricks implements serializable isolation as the highest level of isolation in ACID transactions. It ensures that transactions are executed in a way that is equivalent to serial execution, even when running concurrently. This is achieved through Optimized Writes, Delta Lake, and upsert operations using MERGE.
 
-### Optimization for Reads:
-1. **Partitioning by Time (Event Date)**:
-   - Partitioning the Delta table by the `event_date` column ensures that time-range queries scan only relevant partitions, reducing I/O and improving query speed.
+### Key Features:
+- **Optimized Writes**: Reduce the overhead of small files and improve write throughput.
+- **Upserts Using MERGE**: Efficiently handle updates to existing records.
 
-2. **Z-Ordering**:
-   - Apply Z-Ordering on frequently queried columns such as `region`, `product_id`, or other dimensions. Z-ordering clusters the data based on multiple columns and optimizes query performance by minimizing the number of files that need to be scanned.
+## C) Handling Concurrency, Deduplication, and Upserts
 
-3. **Caching**:
-   - Use Delta Lake caching to store frequently accessed data in memory, significantly reducing the time required for repeated queries.
+### Concurrency:
+- Leverage Delta Lake’s ACID Transactions for data consistency.
+- Use Optimized Writes and Batch Writes to improve performance under high-throughput workloads.
+- Partitioning and Auto-compaction help handle high-frequency writes and improve query performance.
 
----
-
-## b. Write Patterns
-
-### Frequency and Type of Writes:
-- **Batch Writes**: New data is expected to be written in batches at regular intervals (e.g., hourly or daily).
-- **Upserts**: The system requires upserts (update or insert) to handle corrections or new data that may replace existing records.
-
-### Optimization for Writes:
-1. **Batch Write Strategies**:
-   - Use optimized write jobs to write new data in batches. Small writes are combined to avoid generating many small files, which would degrade performance.
-
-2. **Auto-Optimize**:
-   - Enable **auto-optimize** and **auto-compaction** in Delta Lake. This ensures that small files are automatically compacted into larger files, improving both read and write performance.
-
-3. **File Compaction**:
-   - Periodically run a **VACUUM** operation to clean up old, unreferenced files and manage storage overhead.
-
----
-
-## c. Concurrency
-
-### Handling Concurrent Reads and Writes:
-1. **Delta Lake’s ACID Transactions**:
-   - Delta Lake provides ACID transactional guarantees, ensuring that concurrent reads and writes can be performed without conflicts. This ensures that readers see consistent data, even while writes are occurring.
-
-2. **Isolation Levels**:
-   - By default, Delta Lake uses **Serializable isolation**, which is the strictest isolation level and guarantees that readers and writers do not interfere with each other.
-
-3. **Concurrency Control**:
-   - Enable **OPTIMIZE** for high-concurrency environments. This re-organizes the data to make it more efficient for concurrent read and write operations.
-
----
-
-## d. Deduplication and Upserts
-
-### Managing Deduplication:
-1. **Deduplication on Write**:
-   - When writing new data, apply deduplication logic before committing the data to the Delta table. This can be done using Spark’s `dropDuplicates()` function on the incoming DataFrame to ensure only unique records are inserted.
-
-### Handling Upserts (Merge):
-1. **MERGE INTO**:
-   - Use Delta Lake’s `MERGE INTO` functionality to perform upserts. This efficiently handles both inserts of new data and updates to existing records. 
-
-   Example:
-   ```sql
-   MERGE INTO target_table AS target
-   USING source_table AS source
-   ON target.id = source.id
-   WHEN MATCHED THEN UPDATE SET *
-   WHEN NOT MATCHED THEN INSERT *
-   ```
-2. **Partition Pruning**:
-   - During upserts, ensure that the process leverages **partition pruning** by focusing only on the partitions that contain the relevant records to avoid full table scans.
-
+### Deduplication and Upserts:
+- **MERGE** operation ensures that duplicate rows are not written by using a unique identifier.
+- The **MERGE** command efficiently manages both inserts and updates, ensuring that rows are either updated or inserted as needed.
