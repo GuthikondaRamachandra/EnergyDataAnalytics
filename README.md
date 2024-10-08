@@ -146,8 +146,4 @@ dbutils.fs.cp("/FileStore/tables/final_data_petroineous/TransformedEnergyData.cs
 - **Memory Issues**: If dealing with large datasets, ensure your Databricks cluster has sufficient resources (memory, CPU).
 - **Missing Columns**: If expected columns are not found in the Excel sheet, verify that the sheet structure matches the one expected by the pipeline.
 
----
 
-## License
-
-This project is licensed under the MIT License.
