@@ -4,6 +4,11 @@
 This pipeline extracts data from the UK Government’s website, performs transformations, and saves the result as a CSV file in the Databricks FileStore.<br>
 Note: Because of Resource Limitations used Databricks for end to end Implementation(Ingestion and Transformation) where as we can Implement this in Azure Data Factory with Databricks Integration with Metadata Driven Architecture and to have additional features of ADF like scheduling,debug,logging, folder structure based on file Ingestion date etc <br>
 
+I have not added the traditional project structure like below because of time constraint.
+
+![image](https://github.com/user-attachments/assets/5a29ac3c-b7c3-47a7-a673-13ef72060731)
+
+
 
 ## Table of Contents
 - [Project Overview](#project-overview)
