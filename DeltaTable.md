@@ -83,6 +83,3 @@ This document outlines the structure of a Delta table to optimize for read and w
 2. **Partition Pruning**:
    - During upserts, ensure that the process leverages **partition pruning** by focusing only on the partitions that contain the relevant records to avoid full table scans.
 
----
-
-By following these design patterns and optimizations, the Delta table will be highly performant for both read and write operations, even under high-concurrency workloads and frequent updates.
