@@ -2,7 +2,7 @@
 # Data Extraction and Transformation Pipeline in Databricks
 
 This pipeline extracts data from the UK Government’s website, performs transformations, and saves the result as a CSV file in the Databricks FileStore.<br>
-Note: Because of Resource Limitations used Databricks for end to end Implementation(Ingestion and Transformation) where as we can Implement this in Azure Data Factory with Databricks Integration with Metadata Driven Architecture and to have additional features of ADF like scheduling,debug,logging, folder structure based on file Ingestion etc <br>
+Note: Because of Resource Limitations used Databricks for end to end Implementation(Ingestion and Transformation) where as we can Implement this in Azure Data Factory with Databricks Integration with Metadata Driven Architecture and to have additional features of ADF like scheduling,debug,logging, folder structure based on file Ingestion date etc <br>
 
 
 ## Table of Contents
