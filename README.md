@@ -163,5 +163,7 @@ We can have CI/CD Pipeline to deploy the pipelines by using Azure Devops, GIT, D
 7. Data quality checks can be further implemented based on the requirements.
 8. sonarQube can be integrated for the code quality.
 9. Email actions for the failure and success jobs .
+10. We can Integrate the Final Tables with Collibra to have Technical Metadata,Business Metadata and Operational Metadata
+11. Because of Resource Limitations used Databricks as end to end Implementation where as we can Implement this in Azure Data Factory with Databricks Integration to have additional features of ADF like schedululing,debug,logging etc
 
 
