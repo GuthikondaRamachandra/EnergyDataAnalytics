@@ -232,6 +232,52 @@ from datetime import datetime
 
 # COMMAND ----------
 
+def validate_data(df, row_threshold=100, missing_value_threshold=0.1, key_columns=None):
+    """
+    Validates the integrity of the downloaded file by checking row count, missing values, and key columns.
+    
+    :param df: The DataFrame to validate.
+    :param row_threshold: Minimum number of rows required.
+    :param missing_value_threshold: Maximum percentage of missing values allowed.
+    :param key_columns: List of important columns that must be present.
+    :return: None, raises an exception if validation fails.
+    """
+    # Check if the DataFrame meets the row count threshold
+    num_rows = df.shape[0]
+    if num_rows < row_threshold:
+        logging.error(f"Validation Failed: The file contains {num_rows} rows, but {row_threshold} rows are required.")
+        raise ValueError(f"The file contains {num_rows} rows, which is below the minimum threshold of {row_threshold} rows.")
+    logging.info(f"Row count check passed: {num_rows} rows found.")
+
+    # Check for missing values in the DataFrame
+    missing_values = df.isnull().mean()
+    columns_with_missing_data = missing_values[missing_values > missing_value_threshold].index.tolist()
+    if columns_with_missing_data:
+        logging.error(f"Validation Failed: Columns with excessive missing values: {columns_with_missing_data}")
+        raise ValueError(f"Columns {columns_with_missing_data} have more than {missing_value_threshold * 100}% missing values.")
+    logging.info(f"Missing values check passed: No columns exceed the missing value threshold of {missing_value_threshold * 100}%.")
+
+    # Check if all required key columns are present
+    if key_columns:
+        missing_columns = [col for col in key_columns if col not in df.columns]
+        if missing_columns:
+            logging.error(f"Validation Failed: Missing key columns: {missing_columns}")
+            raise ValueError(f"The following key columns are missing: {missing_columns}")
+        logging.info(f"Key columns check passed: All required columns are present.")
+
+    logging.info("All validation checks passed successfully.")
+
+# Example usage after reading the Excel file
+key_columns = ['Category', 'Sub_Category']  # Adjust according to your requirements
+try:
+    validate_data(df_quarter, row_threshold=100, missing_value_threshold=0.1, key_columns=key_columns)
+except ValueError as e:
+    logging.error(f"Data validation failed: {e}")
+    # Handle the error (e.g., stop the pipeline, notify users, etc.)
+
+
+# COMMAND ----------
+
 # Get the list of files in the directory
 logging.info("Fetching list of files from DBFS directory: /FileStore/tables/final_data_petroineous")
 file_list = dbutils.fs.ls("/FileStore/tables/final_data_petroineous")
@@ -254,7 +300,10 @@ dbutils.fs.cp(f"dbfs:{dbfs_excel_path}", local_excel_path)
 # Now read the Excel file using pandas from the local path
 logging.info(f"Reading Excel file: {local_excel_path}")
 df_quarter = pd.read_excel(local_excel_path, sheet_name='Quarter', skiprows=4)
-
+try:
+    validate_data(df_quarter, row_threshold=10, missing_value_threshold=0.1, key_columns=key_columns)
+except ValueError as e:
+    logging.error(f"Data validation failed: {e}")
 # Convert pandas DataFrame to Spark DataFrame
 logging.info("Converting pandas DataFrame to Spark DataFrame")
 spark_df = spark.createDataFrame(df_quarter).withColumn("id", monotonically_increasing_id())
@@ -420,4 +469,3 @@ if part_file_path:
     logging.info(f"DataFrame saved as CSV to: {csv_save_path}")
 else:
     logging.error("No CSV part file found in the temporary directory.")
-
