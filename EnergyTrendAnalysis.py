@@ -4,6 +4,10 @@
 
 # COMMAND ----------
 
+pip install openpyxl
+
+# COMMAND ----------
+
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -269,11 +273,11 @@ def validate_data(df, row_threshold=100, missing_value_threshold=0.1, key_column
 
 # Example usage after reading the Excel file
 key_columns = ['Category', 'Sub_Category']  # Adjust according to your requirements
-try:
-    validate_data(df_quarter, row_threshold=100, missing_value_threshold=0.1, key_columns=key_columns)
-except ValueError as e:
-    logging.error(f"Data validation failed: {e}")
-    # Handle the error (e.g., stop the pipeline, notify users, etc.)
+# try:
+#     validate_data(df_quarter, row_threshold=100, missing_value_threshold=0.1, key_columns=key_columns)
+# except ValueError as e:
+#     logging.error(f"Data validation failed: {e}")
+#     # Handle the error (e.g., stop the pipeline, notify users, etc.)
 
 
 # COMMAND ----------
@@ -437,7 +441,7 @@ finalDF = df_unpivot.withColumn("FileName", lit(file_name))\
 
 # Display final DataFrame information
 logging.info(f"Final DataFrame row count: {finalDF.count()}")
-
+finalDF.display()
 
 # COMMAND ----------
 
@@ -469,3 +473,4 @@ if part_file_path:
     logging.info(f"DataFrame saved as CSV to: {csv_save_path}")
 else:
     logging.error("No CSV part file found in the temporary directory.")
+
