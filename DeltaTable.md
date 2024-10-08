@@ -1,7 +1,7 @@
 
 # Designing the Delta Table for Optimal Read and Write Performance
 
-This document outlines the Energu Trend Analysis of a Delta table to optimize for read and write performance based on the following considerations: read patterns, write patterns, concurrency, and handling deduplication and upserts.
+This document outlines the Energy Trend Analysis of a Delta table to optimize for read and write performance based on the following considerations: read patterns, write patterns, concurrency, and handling deduplication and upserts.
 
 ## Assumptions About Table Usage
 
