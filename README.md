@@ -155,12 +155,12 @@ We can have CI/CD Pipeline to deploy the pipelines by using Azure Devops, GIT, D
 
 ## Best practices to be followed (In Future)
 1. Modular Code Structure : The project can be divided into separate modules
-2. Configuration Management : Using a configuration file (config.json)
+2. Config Files : use configuration file (config.json) and use it in the subsequest steps in pipelines
 3. Docstrings: Each method and class are well-documented with docstrings explaining their purpose, parameters, and return values.
-4. Version Control Integration: gitignore: A .gitignore file is used to exclude unnecessary files and directories from version control, keeping the repository clean and dockerignore: A .dockerignore file is used to exclude files from the Docker build context, optimizing the build process.
+4. Version Control Integration: gitignore: A .gitignore file is used to exclude unnecessary files and directories from version control
 5. Configuration via Environment Variables :  Flexibility: Instead of hardcoding configuration values, using environment variables or configuration files allows for easy changes without modifying the code
 6. Code Quality : PEP 8 Compliance: The code follows PEP 8 style guidelines, ensuring readability and maintainability and Consistent Naming Conventions: Consistent and meaningful naming conventions for variables, functions, and classes improve code readability.
-7. Data quality check s can be further implemented based on the requirements.
+7. Data quality checks can be further implemented based on the requirements.
 8. sonarQube can be integrated for the code quality.
 9. Email actions for the failure and success jobs .
 
